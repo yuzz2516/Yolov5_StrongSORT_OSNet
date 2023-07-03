@@ -23,7 +23,7 @@ import torch.backends.cudnn as cudnn
 from yolov5.models.experimental import attempt_load
 from yolov5.utils.downloads import attempt_download
 from yolov5.models.common import DetectMultiBackend
-from yolov5.utils.datasets import LoadImages, LoadStreams, VID_FORMATS
+from yolov5.utils.dataloaders import LoadImages, LoadStreams, VID_FORMATS
 from yolov5.utils.general import (LOGGER, check_img_size, non_max_suppression, scale_coords,
                                   check_imshow, xyxy2xywh, increment_path, strip_optimizer, colorstr)
 from yolov5.utils.torch_utils import select_device, time_sync
@@ -203,8 +203,8 @@ def detect(opt):
                             bbox_h = output[3] - output[1]
                             # Write MOT compliant results to file
                             with open(txt_path + '.txt', 'a') as f:
-                                f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
-                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
+                                f.write(('%g ' * 11 + '%s ' + '%g ' + '\n') % (frame_idx + 1, cls, id, bbox_left,  # MOT format
+                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, -1, id, idput(cls), round(conf, 2)))
 
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
@@ -251,6 +251,19 @@ def detect(opt):
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
     if update:
         strip_optimizer(yolo_model)  # update model (to fix SourceChangeWarning)
+
+def idput(cls):
+    if cls == 1:
+        return 'car'
+    elif cls == 2:
+        return 'bus'
+    elif cls == 3:
+        return 'light_truck'
+    elif cls == 4:
+        return 'heavy_truck'
+    elif cls == 5:
+        return 'motorbike'
+    
 
 
 if __name__ == '__main__':
