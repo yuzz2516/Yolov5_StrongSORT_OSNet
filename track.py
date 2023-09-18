@@ -252,20 +252,11 @@ def detect(opt):
     if update:
         strip_optimizer(yolo_model)  # update model (to fix SourceChangeWarning)
 
+
 def idput(cls):
-    if cls == 1:
-        return 'car'
-    elif cls == 2:
-        return 'bus'
-    elif cls == 3:
-        return 'light_truck'
-    elif cls == 4:
-        return 'heavy_truck'
-    elif cls == 5:
-        return 'motorbike'
+    mapping = {1: 'car', 2: 'bus', 3: 'light_truck', 4: 'heavy_truck', 5: 'motorbike'} # class番号と名前を対応させる
+    return mapping.get(cls, 'unknown')
     
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--yolo_model', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)')
