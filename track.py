@@ -220,8 +220,8 @@ def run(
                             bbox_h = output[3] - output[1]
                             # Write MOT compliant results to file
                             with open(txt_path + '.txt', 'a') as f:
-                                f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
-                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
+                                f.write(('%g ' * 12 + '%s ' + '%g ' + '\n') % (frame_idx + 1, cls, id, bbox_left,  # MOT format
+                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, -1, id, idput(cls), np.round(conf, 2)))
 
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
@@ -271,6 +271,11 @@ def run(
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
     if update:
         strip_optimizer(yolo_weights)  # update model (to fix SourceChangeWarning)
+
+
+def idput(cls):
+    mapping = {1: 'car', 2: 'bus', 3: 'light_truck', 4: 'heavy_truck', 5: 'motorbike'} # class番号と名前を対応させる
+    return mapping.get(cls, 'unknown')
 
 
 def parse_opt():
